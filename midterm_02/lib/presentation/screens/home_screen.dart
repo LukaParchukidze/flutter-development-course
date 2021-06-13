@@ -96,12 +96,16 @@ class HomeScreen extends StatelessWidget {
                         EditTodoScreen.routeName,
                         arguments: todo,
                       ).then(
-                        (todo) => BlocProvider.of<TodoDataCubit>(context)
-                            .updateTodoData(
-                          Todo.fromJson(
-                            todo as Map<String, dynamic>,
-                          ),
-                        ),
+                        (todo) {
+                          if (todo != null) {
+                            BlocProvider.of<TodoDataCubit>(context)
+                                .updateTodoData(
+                              Todo.fromJson(
+                                todo as Map<String, dynamic>,
+                              ),
+                            );
+                          }
+                        },
                       );
                     },
                   ),
