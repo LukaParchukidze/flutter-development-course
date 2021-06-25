@@ -379,7 +379,7 @@ class ExpenseBottomSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Expense Date'),
+                Text('Date:'),
                 Text(expense.date!),
               ],
             ),
