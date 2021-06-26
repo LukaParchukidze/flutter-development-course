@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:final_project/data/models/expense.dart';
 import 'package:final_project/logic/cubits/todo_data/expense_data_cubit.dart';
 import 'package:final_project/utility/theme.dart';
@@ -87,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen>
                               },
                             ),
                             MaterialButton(
+                              padding: EdgeInsets.all(0),
                               color: AppThemeColors.primaryColorDark,
                               shape: CircleBorder(),
                               onPressed: () {
@@ -203,145 +206,151 @@ class _AddExpenseBottomSheetState extends State<AddExpenseBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppThemeColors.primaryColorAccent,
-      child: Padding(
-        padding: EdgeInsets.all(36),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Card(
-                color: Colors.transparent,
-                shadowColor: Colors.transparent,
-                child: SizedBox(
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    controller: _amount,
-                    decoration: InputDecoration(
-                      hintText: 'Please enter expense amount',
+    return BackdropFilter(
+      filter: ImageFilter.blur(
+        sigmaX: 5,
+        sigmaY: 5,
+      ),
+      child: Container(
+        color: AppThemeColors.primaryColorAccent,
+        child: Padding(
+          padding: EdgeInsets.all(36),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Card(
+                  color: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  child: SizedBox(
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      controller: _amount,
+                      decoration: InputDecoration(
+                        hintText: 'Please enter expense amount',
+                      ),
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            double.tryParse(value) == null) {
+                          return "Please enter valid expense amount";
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          double.tryParse(value) == null) {
-                        return "Please enter valid expense amount";
-                      }
-                      return null;
-                    },
                   ),
                 ),
-              ),
-              Card(
-                color: Colors.transparent,
-                shadowColor: Colors.transparent,
-                child: SizedBox(
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    controller: _title,
-                    decoration: InputDecoration(
-                      hintText: 'Please enter expense title',
+                Card(
+                  color: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  child: SizedBox(
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      controller: _title,
+                      decoration: InputDecoration(
+                        hintText: 'Please enter expense title',
+                      ),
+                      keyboardType: TextInputType.name,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter valid expense title";
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter valid expense title";
-                      }
-                      return null;
-                    },
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_date.text),
-                    SizedBox(
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_date.text),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(0),
+                              lastDate: DateTime.now(),
+                            ).then((value) {
+                              if (value != null) {
+                                _date.text = value
+                                    .toString()
+                                    .substring(0, 10)
+                                    .split('-')
+                                    .reversed
+                                    .join('/');
+
+                                setState(() {});
+                              }
+                            });
+                          },
+                          child: Text('Pick Date'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              AppThemeColors.primaryColorDark,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width / 3,
                       child: ElevatedButton(
-                        onPressed: () {
-                          showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(0),
-                            lastDate: DateTime.now(),
-                          ).then((value) {
-                            if (value != null) {
-                              _date.text = value
-                                  .toString()
-                                  .substring(0, 10)
-                                  .split('-')
-                                  .reversed
-                                  .join('/');
-
-                              setState(() {});
-                            }
-                          });
-                        },
-                        child: Text('Pick Date'),
                         style: ButtonStyle(
+                          shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent,
+                          ),
                           backgroundColor: MaterialStateProperty.all<Color>(
                             AppThemeColors.primaryColorDark,
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        shadowColor: MaterialStateProperty.all<Color>(
-                          Colors.transparent,
-                        ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          AppThemeColors.primaryColorDark,
-                        ),
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
                         ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          BlocProvider.of<ExpenseDataCubit>(context)
-                              .addExpenseData(
-                            {
-                              'amount': _amount.text,
-                              'title': _title.text,
-                              'date': _date.text != 'Pick Date'
-                                  ? _date.text
-                                  : DateTime.now()
-                                      .toString()
-                                      .substring(0, 10)
-                                      .split('-')
-                                      .reversed
-                                      .join('/'),
-                            },
-                          );
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            BlocProvider.of<ExpenseDataCubit>(context)
+                                .addExpenseData(
+                              {
+                                'amount': _amount.text,
+                                'title': _title.text,
+                                'date': _date.text != 'Pick Date'
+                                    ? _date.text
+                                    : DateTime.now()
+                                        .toString()
+                                        .substring(0, 10)
+                                        .split('-')
+                                        .reversed
+                                        .join('/'),
+                              },
+                            );
 
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text(
-                        "Add".toUpperCase(),
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text(
+                          "Add".toUpperCase(),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -356,111 +365,118 @@ class ExpenseBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppThemeColors.primaryColorAccent,
-      child: Padding(
-        padding: EdgeInsets.all(36),
-        child: Column(
-          children: [
-            Text(
-              expense.title!,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Expense Amount'),
-                Text('${expense.amount!} \$'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Date:'),
-                Text(expense.date!),
-              ],
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return BackdropFilter(
+      filter: ImageFilter.blur(
+        sigmaX: 5,
+        sigmaY: 5,
+      ),
+      child: Container(
+        color: AppThemeColors.primaryColorAccent,
+        child: Padding(
+          padding: EdgeInsets.all(36),
+          child: Column(
+            children: [
+              Text(
+                expense.title!,
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  MaterialButton(
-                    color: AppThemeColors.primaryColorDark,
-                    shape: CircleBorder(),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return EditExpenseBottomSheet(expense: expense);
-                        },
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 36,
-                      ),
-                    ),
-                  ),
-                  MaterialButton(
-                    color: AppThemeColors.primaryColorDark,
-                    shape: CircleBorder(),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Delete'),
-                            content: Text('Remove ${expense.title}?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-
-                                  BlocProvider.of<ExpenseDataCubit>(context)
-                                      .deleteExpenseData(
-                                    expense,
-                                  );
-
-                                  Navigator.pop(context);
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${expense.title} deleted'),
-                                    ),
-                                  );
-                                },
-                                child: Text('Confirm'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                        size: 36,
-                      ),
-                    ),
-                  ),
+                  Text('Expense Amount'),
+                  Text('${expense.amount!} \$'),
                 ],
               ),
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Date:'),
+                  Text(expense.date!),
+                ],
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    MaterialButton(
+                      color: AppThemeColors.primaryColorDark,
+                      shape: CircleBorder(),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return EditExpenseBottomSheet(expense: expense);
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                    MaterialButton(
+                      color: AppThemeColors.primaryColorDark,
+                      shape: CircleBorder(),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Delete'),
+                              content: Text('Remove ${expense.title}?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+
+                                    BlocProvider.of<ExpenseDataCubit>(context)
+                                        .deleteExpenseData(
+                                      expense,
+                                    );
+
+                                    Navigator.pop(context);
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text('${expense.title} deleted'),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('Confirm'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -501,147 +517,153 @@ class _EditExpenseBottomSheetState extends State<EditExpenseBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppThemeColors.primaryColorAccent,
-      child: Padding(
-        padding: EdgeInsets.all(36),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Card(
-                color: Colors.transparent,
-                shadowColor: Colors.transparent,
-                child: SizedBox(
-                  child: TextFormField(
-                    controller: _amount,
-                    decoration: InputDecoration(
-                      hintText: 'Please enter expense amount',
+    return BackdropFilter(
+      filter: ImageFilter.blur(
+        sigmaX: 5,
+        sigmaY: 5,
+      ),
+      child: Container(
+        color: AppThemeColors.primaryColorAccent,
+        child: Padding(
+          padding: EdgeInsets.all(36),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Card(
+                  color: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  child: SizedBox(
+                    child: TextFormField(
+                      controller: _amount,
+                      decoration: InputDecoration(
+                        hintText: 'Please enter expense amount',
+                      ),
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            double.tryParse(value) == null) {
+                          return "Please enter valid expense amount";
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          double.tryParse(value) == null) {
-                        return "Please enter valid expense amount";
-                      }
-                      return null;
-                    },
                   ),
                 ),
-              ),
-              Card(
-                color: Colors.transparent,
-                shadowColor: Colors.transparent,
-                child: SizedBox(
-                  child: TextFormField(
-                    controller: _title,
-                    decoration: InputDecoration(
-                      hintText: 'Please enter expense title',
+                Card(
+                  color: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  child: SizedBox(
+                    child: TextFormField(
+                      controller: _title,
+                      decoration: InputDecoration(
+                        hintText: 'Please enter expense title',
+                      ),
+                      keyboardType: TextInputType.name,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter valid expense title";
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter valid expense title";
-                      }
-                      return null;
-                    },
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_date.text),
-                    SizedBox(
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_date.text),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(0),
+                              lastDate: DateTime.now(),
+                            ).then((value) {
+                              if (value != null) {
+                                _date.text = value
+                                    .toString()
+                                    .substring(0, 10)
+                                    .split('-')
+                                    .reversed
+                                    .join('/');
+
+                                setState(() {});
+                              }
+                            });
+                          },
+                          child: Text('Pick Date'),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              AppThemeColors.primaryColorDark,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width / 3,
                       child: ElevatedButton(
-                        onPressed: () {
-                          showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(0),
-                            lastDate: DateTime.now(),
-                          ).then((value) {
-                            if (value != null) {
-                              _date.text = value
-                                  .toString()
-                                  .substring(0, 10)
-                                  .split('-')
-                                  .reversed
-                                  .join('/');
-
-                              setState(() {});
-                            }
-                          });
-                        },
-                        child: Text('Pick Date'),
                         style: ButtonStyle(
+                          shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent,
+                          ),
                           backgroundColor: MaterialStateProperty.all<Color>(
                             AppThemeColors.primaryColorDark,
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        shadowColor: MaterialStateProperty.all<Color>(
-                          Colors.transparent,
-                        ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          AppThemeColors.primaryColorDark,
-                        ),
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
                         ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          BlocProvider.of<ExpenseDataCubit>(context)
-                              .updateExpenseData(
-                            Expense.fromJson(
-                              {
-                                'id': widget.expense.id,
-                                'amount': _amount.text,
-                                'title': _title.text,
-                                'date': _date.text != 'Pick Date'
-                                    ? _date.text
-                                    : DateTime.now()
-                                        .toString()
-                                        .substring(0, 10)
-                                        .split('-')
-                                        .reversed
-                                        .join('/'),
-                              },
-                            ),
-                          );
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            BlocProvider.of<ExpenseDataCubit>(context)
+                                .updateExpenseData(
+                              Expense.fromJson(
+                                {
+                                  'id': widget.expense.id,
+                                  'amount': _amount.text,
+                                  'title': _title.text,
+                                  'date': _date.text != 'Pick Date'
+                                      ? _date.text
+                                      : DateTime.now()
+                                          .toString()
+                                          .substring(0, 10)
+                                          .split('-')
+                                          .reversed
+                                          .join('/'),
+                                },
+                              ),
+                            );
 
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text(
-                        "Edit".toUpperCase(),
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text(
+                          "Edit".toUpperCase(),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
