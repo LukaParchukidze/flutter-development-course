@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Card(
                   color: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  child: SizedBox(
+                  child: Container(
                     width: MediaQuery.of(context).size.width / 2,
                     height: 32,
                     child: TextFormField(
@@ -46,6 +46,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
+                        ),
+                        errorStyle: TextStyle(
+                          height: 0,
+                          color: Colors.transparent,
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
                         ),
                         fillColor: AppThemeColors.primaryColorLight,
                         filled: true,
